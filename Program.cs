@@ -1,122 +1,361 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace StaticAndEnumTasks
+namespace BigPracticeProject
 {
-    // ЗАДАНИЕ 1
-    class User
+    // ЗАДАЧА 1
+    class Book
     {
-        private static int _userCount = 0;
-        public static int IdCounter = 0;
+        public string Title;
+        public string Author;
+        public int Year;
 
-        public int Id { get; private set; }
-
-        public User()
+        public Book(string title, string author, int year)
         {
-            _userCount++;
-            IdCounter++;
-            Id = IdCounter;
-        }
-
-        public static int GetTotalUsers()
-        {
-            return _userCount;
+            Title = title;
+            Author = author;
+            Year = year;
         }
     }
 
-    // ЗАДАНИЕ 2
-    class Planet
+    // ЗАДАЧА 2
+    class Student
     {
-        private const double G = 6.67430e-11;
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int StudentId { get; set; }
+        public double AverageGrade { get; private set; }
 
-        public string Name { get; }
-        public double Mass { get; }
-        public double Radius { get; }
+        public Student(string firstName, string lastName, int id)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            StudentId = id;
+            AverageGrade = 0.0;
+        }
 
-        private Planet(string name, double mass, double radius)
+        public void UpdateGrade(double grade)
+        {
+            AverageGrade = grade;
+        }
+    }
+
+    // ЗАДАЧА 3
+    enum TrafficLightColor { Red, Yellow, Green }
+
+    class TrafficLight
+    {
+        public TrafficLightColor CurrentColor { get; set; }
+
+        public TrafficLight(TrafficLightColor startColor)
+        {
+            CurrentColor = startColor;
+        }
+
+        public void ChangeColor()
+        {
+            if (CurrentColor == TrafficLightColor.Red)
+                CurrentColor = TrafficLightColor.Green;
+            else if (CurrentColor == TrafficLightColor.Green)
+                CurrentColor = TrafficLightColor.Yellow;
+            else
+                CurrentColor = TrafficLightColor.Red;
+        }
+    }
+
+    // ЗАДАЧА 4
+    class Rectangle
+    {
+        public double Width { get; private set; }
+        public double Height { get; private set; }
+
+        public Rectangle(double width, double height)
+        {
+            if (width > 0 && height > 0)
+            {
+                Width = width;
+                Height = height;
+            }
+        }
+
+        public double Area => Width * Height;
+        public double Perimeter => 2 * (Width + Height);
+    }
+
+    // ЗАДАЧА 5
+    class BankAccount
+    {
+        public string AccountNumber { get; }
+        public string OwnerName { get; set; }
+        public decimal Balance { get; private set; }
+
+        public BankAccount(string number, string owner)
+        {
+            AccountNumber = number;
+            OwnerName = owner;
+            Balance = 0;
+        }
+
+        public void Deposit(decimal amount)
+        {
+            Balance += amount;
+        }
+
+        public void Withdraw(decimal amount)
+        {
+            if (amount <= Balance)
+                Balance -= amount;
+        }
+    }
+
+    // ЗАДАЧА 6
+    class LibraryBook
+    {
+        public string Title { get; private set; }
+        public string Author { get; private set; }
+        public bool IsAvailable { get; set; }
+
+        public LibraryBook(string title, string author)
+        {
+            Title = title;
+            Author = author;
+            IsAvailable = true;
+        }
+    }
+
+    class Library
+    {
+        private List<LibraryBook> books = new List<LibraryBook>();
+
+        public void AddBook(LibraryBook book)
+        {
+            books.Add(book);
+        }
+
+        public List<LibraryBook> FindBooksByAuthor(string author)
+        {
+            return books.FindAll(b => b.Author == author);
+        }
+
+        public void BorrowBook(string title)
+        {
+            foreach (var book in books)
+            {
+                if (book.Title == title && book.IsAvailable)
+                {
+                    book.IsAvailable = false;
+                    Console.WriteLine("Книга выдана");
+                    return;
+                }
+            }
+            Console.WriteLine("Книга недоступна");
+        }
+    }
+
+    // ЗАДАЧА 7
+    class GameCharacter
+    {
+        public string Name { get; set; }
+        public int Health { get; set; }
+        public int Strength { get; set; }
+
+        public GameCharacter(string name, int strength)
         {
             Name = name;
-            Mass = mass;
-            Radius = radius;
+            Health = 100;
+            Strength = strength;
         }
 
-        public static readonly Planet Mercury =
-            new Planet("Mercury", 3.30e23, 2.44e6);
-
-        public static readonly Planet Venus =
-            new Planet("Venus", 4.87e24, 6.05e6);
-
-        public static readonly Planet Earth =
-            new Planet("Earth", 5.97e24, 6.37e6);
-
-        public static readonly Planet Mars =
-            new Planet("Mars", 6.42e23, 3.39e6);
-
-        public double CalculateGravity()
+        public void Attack(GameCharacter enemy)
         {
-            return (G * Mass) / (Radius * Radius);
+            enemy.Health -= Strength;
+            Console.WriteLine($"{Name} атаковал {enemy.Name}. Здоровье врага: {enemy.Health}");
+        }
+
+        public void Attack(GameCharacter enemy, int multiplier)
+        {
+            enemy.Health -= Strength * multiplier;
+            Console.WriteLine($"{Name} усилил атаку! Здоровье врага: {enemy.Health}");
+        }
+
+        public void Heal(int amount)
+        {
+            Health += amount;
+            if (Health > 100) Health = 100;
         }
     }
 
-    // ЗАДАНИЕ 3
-    class LogLevel
+    // ЗАДАЧА 8
+    enum DeviceStatus { Off, On, Standby }
+
+    class SmartDevice
     {
-        public static readonly LogLevel Info = new LogLevel(ConsoleColor.White);
-        public static readonly LogLevel Warning = new LogLevel(ConsoleColor.Yellow);
-        public static readonly LogLevel Error = new LogLevel(ConsoleColor.Red);
+        public string Name { get; set; }
+        public DeviceStatus Status { get; set; }
+        public int PowerConsumption { get; set; }
 
-        private ConsoleColor _color;
-
-        private LogLevel(ConsoleColor color)
+        public SmartDevice(string name, int power)
         {
-            _color = color;
-        }
-
-        public ConsoleColor GetConsoleColor()
-        {
-            return _color;
+            Name = name;
+            PowerConsumption = power;
+            Status = DeviceStatus.Off;
         }
     }
 
-    static class Logger
+    class SmartRoom
     {
-        public static void Log(string message, LogLevel level)
+        public List<SmartDevice> Devices = new List<SmartDevice>();
+
+        public void AddDevice(SmartDevice device)
         {
-            Console.ForegroundColor = level.GetConsoleColor();
-            Console.WriteLine(message);
-            Console.ResetColor();
+            Devices.Add(device);
+        }
+
+        public void TurnOnAllDevices()
+        {
+            foreach (var d in Devices)
+                d.Status = DeviceStatus.On;
+        }
+
+        public void TurnOffAllDevices()
+        {
+            foreach (var d in Devices)
+                d.Status = DeviceStatus.Off;
+        }
+
+        public int TotalPowerConsumption
+        {
+            get
+            {
+                int total = 0;
+                foreach (var d in Devices)
+                    if (d.Status == DeviceStatus.On)
+                        total += d.PowerConsumption;
+                return total;
+            }
         }
     }
 
+    // ЗАДАЧА 9
+    class Product
+    {
+        public int Id;
+        public string Name;
+        public decimal Price;
+    }
+
+    class OrderItem
+    {
+        public Product Product;
+        public int Quantity;
+
+        public decimal TotalPrice => Product.Price * Quantity;
+    }
+
+    class Order
+    {
+        public int OrderId;
+        public string CustomerName;
+        public List<OrderItem> Items = new List<OrderItem>();
+
+        public void AddItem(Product product, int quantity)
+        {
+            Items.Add(new OrderItem { Product = product, Quantity = quantity });
+        }
+
+        public decimal OrderTotal
+        {
+            get
+            {
+                decimal total = 0;
+                foreach (var item in Items)
+                    total += item.TotalPrice;
+                return total;
+            }
+        }
+    }
+
+    // ЗАДАЧА 10
+    enum Direction { None, Up, Down }
+    enum DoorStatus { Open, Closed }
+
+    class Elevator
+    {
+        public int CurrentFloor { get; private set; }
+        public int MaxFloor { get; }
+        public int MinFloor => 1;
+
+        public Direction Direction { get; private set; }
+        public DoorStatus DoorStatus { get; private set; }
+        public bool IsMoving { get; private set; }
+
+        public Elevator(int maxFloor)
+        {
+            MaxFloor = maxFloor;
+            CurrentFloor = 1;
+            DoorStatus = DoorStatus.Closed;
+            Direction = Direction.None;
+        }
+
+        public void Call(int targetFloor)
+        {
+            MoveTo(targetFloor);
+        }
+
+        public void MoveTo(int targetFloor)
+        {
+            if (targetFloor < MinFloor || targetFloor > MaxFloor)
+                return;
+
+            CloseDoor();
+            IsMoving = true;
+
+            if (targetFloor > CurrentFloor)
+                Direction = Direction.Up;
+            else if (targetFloor < CurrentFloor)
+                Direction = Direction.Down;
+
+            CurrentFloor = targetFloor;
+            IsMoving = false;
+            Direction = Direction.None;
+            OpenDoor();
+        }
+
+        public void OpenDoor()
+        {
+            if (!IsMoving)
+                DoorStatus = DoorStatus.Open;
+        }
+
+        public void CloseDoor()
+        {
+            DoorStatus = DoorStatus.Closed;
+        }
+
+        public string Status
+        {
+            get
+            {
+                if (IsMoving)
+                    return $"Moving {Direction} to floor {CurrentFloor}";
+                else
+                    return $"Stopped on floor {CurrentFloor}, doors {DoorStatus}";
+            }
+        }
+    }
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Console.WriteLine("=== ЗАДАНИЕ 1 ===");
+            Console.WriteLine("=== ЛИФТ ===");
+            Elevator elevator = new Elevator(5);
 
-            User user1 = new User();
-            User user2 = new User();
-            User user3 = new User();
-
-            Console.WriteLine($"User1 ID: {user1.Id}");
-            Console.WriteLine($"User2 ID: {user2.Id}");
-            Console.WriteLine($"User3 ID: {user3.Id}");
-
-            Console.WriteLine("Всего пользователей: " + User.GetTotalUsers());
-
-            Console.WriteLine("\n=== ЗАДАНИЕ 2 ===");
-
-            Console.WriteLine($"Планета: {Planet.Earth.Name}");
-            Console.WriteLine($"Гравитация: {Planet.Earth.CalculateGravity()}");
-
-            Console.WriteLine($"Планета: {Planet.Mars.Name}");
-            Console.WriteLine($"Гравитация: {Planet.Mars.CalculateGravity()}");
-
-            Console.WriteLine("\n=== ЗАДАНИЕ 3 ===");
-
-            Logger.Log("Система запущена", LogLevel.Info);
-            Logger.Log("Память заканчивается", LogLevel.Warning);
-            Logger.Log("Критический сбой!", LogLevel.Error);
+            Console.WriteLine(elevator.Status);
+            elevator.Call(4);
+            Console.WriteLine(elevator.Status);
+            elevator.MoveTo(2);
+            Console.WriteLine(elevator.Status);
         }
     }
 }
